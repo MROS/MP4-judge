@@ -23,7 +23,6 @@ async function run_until_port_ok() {
         const range = PORT_UPPER_BOUND - PORT_LOWER_BOUND;
         let port = PORT_LOWER_BOUND + Math.floor(Math.random() * range);
 
-        port = 9898;
         console.log(`嘗試 ${port} 埠口`);
 
         let server = child_process.spawn("./inf-bonbon-server", [`${port}`]);
@@ -43,7 +42,6 @@ async function run_until_port_ok() {
             console.log(`綁定於 ${port} 埠口`);
             return port;
         }
-
     }
 }
 
