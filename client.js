@@ -22,9 +22,8 @@ const EVENT = {
 
 class Client {
     constructor(port, hook) {
-        this.status = STATUS.NOT_CONNECTED;
+        this.msg_count = 0;
         this.socket = net.createConnection({ host: "localhost", port: port });
-        this.hook = hook || {};
 
         this.socket.on('connect', () => { this.status = STATUS.IDLE; });
         this.buffer = "";
@@ -67,6 +66,36 @@ class Client {
         const res = await this.get_cmd();
         return (res.cmd == "matched") && check_fun(res);
     }
+
+    send_message(msg) {
+        this.msg_count += 1;
+        this.socket.write(cmd.send_message(msg, this.msg_count));
+    }
+
+    async get_send_message_ack(check_fun) {
+        const res = await this.get_cmd();
+        return (res.cmd == "send_message") && check_fun(res);
+    }
+
+    async get_recv_message(check_fun) {
+        const res = await this.get_cmd();
+        return (res.cmd == "receive_message") && check_fun(res);
+    }
+
+    quit() {
+        this.socket.write(cmd.quit());
+    }
+
+    async get_quit_ack() {
+        const res = await this.get_cmd();
+        return res.cmd == "quit";
+    }
+
+    async get_other_side_quit() {
+        const res = await this.get_cmd();
+        return res.cmd == "other_side_quit";
+    }
+
 }
 
 module.exports = {

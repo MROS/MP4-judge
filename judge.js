@@ -3,6 +3,7 @@
 
 const child_process = require("child_process");
 const Client = require("./client.js").Client;
+require("colors");
 
 const argv = require('minimist')(process.argv.slice(2));
 
@@ -67,6 +68,7 @@ const test_suites = [
 
 async function judge(test_suites) {
     let point = 0;
+    let count = 1;
     for (let test_suite of test_suites) {
         let ok = true;
         for (let test_case of test_suite) {
@@ -75,8 +77,10 @@ async function judge(test_suites) {
             child_process.execSync("killall inf-bonbon-server");
         }
         point += (ok ? 2 : 0);
+        console.log(`測試集 ${count}： ${ok ? "通過".green : "失敗".red}`);
+        count += 1;
     }
-    console.log(`得分爲 ${point} 分`)
+    console.log(`得分爲 ${point} 分`);
 }
 
 judge(test_suites).then();

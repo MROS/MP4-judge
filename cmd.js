@@ -1,7 +1,5 @@
 const fs = require("fs");
 
-let count = 0;
-
 module.exports = {
     quit: function() {
         return JSON.stringify({
@@ -19,8 +17,7 @@ module.exports = {
         };
         return JSON.stringify(info) + "\n";
     },
-    send_message: function(msg) {
-        count += 1;
+    send_message: function(msg, count) {
         return JSON.stringify({
             cmd: "send_message",
             sequence: count,
