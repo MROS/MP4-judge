@@ -7,7 +7,7 @@ const randomstring = require("randomstring");
 module.exports = [
     async function(port) {
         const clients = [];
-        const NUMBER = 150;
+        const NUMBER = 350;
         for (let i = 0; i < NUMBER * 2; i++) {
             const client = new Client(port);
             clients.push(client);
@@ -26,6 +26,7 @@ module.exports = [
         for (let i = 0; i < 5; i++) {
             const client = new Client(port);
             client.try_match(0, filter_function.busy_then_false(1e10));
+            await client.get_try_match_ack();
         }
 
         promises = [];
@@ -35,7 +36,7 @@ module.exports = [
             console.log("開始傳送訊息");
             setTimeout(function() { resolve(false); }, 2000);
 
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 100; i++) {
                 const str = randomstring.generate(1000);
                 clients[i].send_message(str);
                 let p = clients[NUMBER * 2 - 1 - i].get_recv_message((cmd) => cmd.message == str);
