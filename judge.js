@@ -30,7 +30,7 @@ async function run_until_port_ok() {
 
         console.log(`嘗試 ${port} 埠口`);
 
-        let server = child_process.spawn("./inf-bonbon-server", [`${port}`]);
+        let server = child_process.spawn("../inf-bonbon-server", [`${port}`]);
 
         let ok = true;
 
@@ -63,13 +63,17 @@ async function run_until_port_ok() {
 const test_suite_1_small = require("./1_small.js");
 
 const test_suites = [
-    test_suite_1_small
+    test_suite_1_small.slice(3)
 ];
 
 async function judge(test_suites) {
     let point = 0;
     let count = 1;
     for (let test_suite of test_suites) {
+        child_process.execSync("rm -rf working_dir");
+        child_process.execSync("mkdir working_dir");
+        child_process.execSync("cp inf-bonbon-server working_dir");
+        process.chdir("./working_dir");
         let ok = true;
         for (let test_case of test_suite) {
             const port = await run_until_port_ok();

@@ -1,6 +1,7 @@
 const Client = require("./client.js").Client;
 const EVENT = require("./client.js").EVENT;
 const filter_function = require("./filter_function.js");
+const util = require("./util.js");
 
 module.exports = [
     // try_match 會回 ack
@@ -71,5 +72,29 @@ module.exports = [
         ok = ok && (await client_3.get_matched((cmd) => cmd.age == 1));
 
         return ok;
+    },
+    async function(port) {
+        let clients = {};
+        for (let i = 1; i <= 5; i++) {
+            const client = new Client(port);
+            client.try_match(i, filter_function.match_with_age(i + 100));
+            await client.get_try_match_ack();
+            clients[i] = client;
+        }
+        for (let i = 5; i >= 1; i--) {
+            const client = new Client(port);
+            client.try_match(i + 100, filter_function.match_with_age(i));
+            await client.get_try_match_ack();
+            clients[i + 100] = client;
+        }
+        let promises = [];
+        for (let i = 1; i <= 5; i++) {
+            let p = clients[i].get_matched((cmd) => cmd.age == i + 100);
+            promises.push(p);
+            p = clients[i + 100].get_matched((cmd) => cmd.age == i);
+            promises.push(p)
+        }
+        let results = await Promise.all(promises);
+        return util.all_true(results);
     }
 ];
