@@ -119,5 +119,65 @@ module.exports = [
         }
         let results = await Promise.all(promises);
         return util.all_true(results);
-    }
+    },
+    // 在配對途中送 quit
+    async function(port) {
+        console.log("在配對途中送 quit");
+        const false_client_1 = new Client(port);
+        false_client_1.try_match(1, filter_function.always_true);
+        await false_client_1.get_try_match_ack();
+
+        const false_client_2 = new Client(port);
+        false_client_2.try_match(2, filter_function.busy_then_false(2e9));
+        await false_client_2.get_try_match_ack();
+
+        false_client_1.quit();
+        let ok = (await false_client_1.get_quit_ack());
+        if (!ok) { return false; }
+
+        const true_client_1 = new Client(port);
+        true_client_1.try_match(3, filter_function.always_true);
+        await true_client_1.get_try_match_ack();
+
+        const true_client_2 = new Client(port);
+        true_client_2.try_match(4, filter_function.always_true);
+        await true_client_2.get_try_match_ack();
+
+        ok = await true_client_1.get_matched((cmd) => cmd.age == 4);
+        ok = ok && true_client_2.get_matched((cmd) => cmd.age == 3);
+
+        return ok;
+    },
+    // 在配對失敗後送 quit
+    async function(port) {
+        console.log("在配對失敗後送 quit");
+
+        const false_client_1 = new Client(port);
+        false_client_1.try_match(1, filter_function.always_true);
+        await false_client_1.get_try_match_ack();
+
+        const false_client_2 = new Client(port);
+        false_client_2.try_match(2, filter_function.always_false);
+        await false_client_2.get_try_match_ack();
+
+        await util.sleep(1000);
+
+        false_client_1.quit();
+        let ok = (await false_client_1.get_quit_ack());
+        if (!ok) { return false; }
+
+        const true_client_1 = new Client(port);
+        true_client_1.try_match(3, filter_function.always_true);
+        await true_client_1.get_try_match_ack();
+
+        const true_client_2 = new Client(port);
+        true_client_2.try_match(4, filter_function.always_true);
+        await true_client_2.get_try_match_ack();
+
+        ok = await true_client_1.get_matched((cmd) => cmd.age == 4);
+        ok = ok && true_client_2.get_matched((cmd) => cmd.age == 3);
+
+        return ok;
+    },
+    // 重複 try_match
 ];

@@ -1,22 +1,19 @@
 // 請將本 judge.js 程式與您的 inf-bonbon-server 置於同一個乾淨目錄後
 // 執行 node judge.js
 
-const child_process = require("child_process");
-const Client = require("./client.js").Client;
-require("colors");
-
-const argv = require('minimist')(process.argv.slice(2));
-
-const PROGRAM_NAME = "inf-bonbon-server";
-
 if (process.argv.length > 3) {
     console.log("用法： node judge.js [-s|--slient]");
     process.exit();
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+const child_process = require("child_process");
+const Client = require("./client.js").Client;
+const util = require("./util.js");
+require("colors");
+
+const argv = require('minimist')(process.argv.slice(2));
+
+const PROGRAM_NAME = "inf-bonbon-server";
 
 const PORT_LOWER_BOUND = 50000;
 const PORT_UPPER_BOUND = 60000;
@@ -51,7 +48,7 @@ async function run_until_port_ok() {
             });
         }
 
-        await sleep(1000);
+        await util.sleep(1000);
         
         if (ok) {
             console.log(`綁定於 ${port} 埠口`);
@@ -61,9 +58,11 @@ async function run_until_port_ok() {
 }
 
 const test_suite_1_small = require("./1_small.js");
+const test_suite_4_800_online = require("./4_800_online.js");
 
 const test_suites = [
-    test_suite_1_small
+    // test_suite_1_small,
+    test_suite_4_800_online,
 ];
 
 async function judge(test_suites) {
