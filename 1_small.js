@@ -50,6 +50,7 @@ module.exports = [
     },
     // 三人匹配，1 應與 3 配對
     async function (port) {
+        console.log("測資：三人匹配，1 應與 3 配對");
         const client_1 = new Client(port);
         const client_2 = new Client(port);
         const client_3 = new Client(port);
@@ -73,8 +74,30 @@ module.exports = [
 
         return ok;
     },
+    // 連續十人匹配
     async function(port) {
-        let clients = {};
+        console.log("連續十人匹配");
+        const clients = [];
+        for (let i = 0; i < 10; i++) {
+            const client = new Client(port);
+            client.try_match(i, filter_function.always_true);
+            await client.get_try_match_ack();
+            clients.push(client);
+        }
+        let promises = [];
+        for (let i = 0; i < 5; i++) {
+            const x = i * 2;
+            const y = i * 2 + 1;
+            let p = clients[x].get_matched((cmd) => cmd.age == y);
+            promises.push(p);
+            p = clients[y].get_matched((cmd) => cmd.age == x);
+            promises.push(p)
+        }
+        let results = await Promise.all(promises);
+        return util.all_true(results);
+    },
+    async function(port) {
+        const clients = {};
         for (let i = 1; i <= 5; i++) {
             const client = new Client(port);
             client.try_match(i, filter_function.match_with_age(i + 100));
