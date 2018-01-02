@@ -64,21 +64,26 @@ const test_suite_4_1_800_online = require("./4_1_800_online.js");
 const test_suite_4_2_800_online_offline = require("./4_2_800_online_offline.js");
 
 const test_suites = [
-    // {
-    //     name: "基礎",
-    //     cases: test_suite_1_1_basic,
-    //     point: 1,
-    // },
-    // {
-    //     name: "小型",
-    //     cases: test_suite_1_2_small,
-    //     point: 1,
-    // },
-    // {
-    //     name: "多人上線",
-    //     cases: test_suite_4_1_800_online,
-    //     point: 1,
-    // },
+    {
+        name: "基礎",
+        cases: test_suite_1_1_basic,
+        point: 1,
+    },
+    {
+        name: "小型",
+        cases: test_suite_1_2_small,
+        point: 1,
+    },
+    {
+        name: "平行化程度",
+        cases: test_suite_2_parallel,
+        point: 2,
+    },
+    {
+        name: "多人上線",
+        cases: test_suite_4_1_800_online,
+        point: 1,
+    },
     {
         name: "多人上線下線",
         cases: test_suite_4_2_800_online_offline,
@@ -100,11 +105,12 @@ async function judge(test_suites) {
             
             console.log(`測試：${test_case.name}`)
             const case_ok = await test_case.func(port);
-            console.log(`測試：${test_case.name} ${ok ? "通過".green : "失敗".red}`);
+            console.log(`測試：${test_case.name} ${case_ok ? "通過".green : "失敗".red}`);
 
             ok = ok && case_ok;
 
             child_process.execSync("killall inf-bonbon-server");
+            process.chdir("..");
         }
         point += (ok ? test_suite.point : 0);
         console.log(`-------------- 測試集 ${test_suite.name}： ${ok ? "通過".green : "失敗".red} ----------------`);

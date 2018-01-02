@@ -7,7 +7,7 @@ struct User {
 
 int filter_function(struct User user) {
     unsigned long long int x = 1;
-    for (unsigned long long int i = 0; i < 2e8; i++) {
+    for (unsigned long long int i = 0; i < 500 * 1000 * 1000; i++) {
         x = x ^ i;
     }
     return (x == 0);
