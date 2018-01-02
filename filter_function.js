@@ -14,5 +14,16 @@ int filter_function(struct User user) {
     return (x == 0);
 }
 `
+    },
+    busy_then_true: function(amount) {
+        return `
+int filter_function(struct User user) {
+    unsigned long long int x = 1;
+    for (unsigned long long int i = 0; i < ${amount}; i++) {
+        x = x ^ i;
+    }
+    return !(x == 0);
+}
+`
     }
 }

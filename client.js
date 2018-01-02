@@ -96,6 +96,10 @@ class Client {
         return res.cmd == "other_side_quit";
     }
 
+    close() {
+        this.socket.destroy();
+    }
+
 }
 
 module.exports = {

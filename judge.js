@@ -57,12 +57,33 @@ async function run_until_port_ok() {
     }
 }
 
-const test_suite_1_small = require("./1_small.js");
-const test_suite_4_800_online = require("./4_800_online.js");
+const test_suite_1_1_basic = require("./1_1_basic.js");
+const test_suite_1_2_small = require("./1_2_small.js");
+const test_suite_2_parallel = require("./2_parallel.js");
+const test_suite_4_1_800_online = require("./4_1_800_online.js");
+const test_suite_4_2_800_online_offline = require("./4_2_800_online_offline.js");
 
 const test_suites = [
-    // test_suite_1_small,
-    test_suite_4_800_online,
+    // {
+    //     name: "基礎",
+    //     cases: test_suite_1_1_basic,
+    //     point: 1,
+    // },
+    // {
+    //     name: "小型",
+    //     cases: test_suite_1_2_small,
+    //     point: 1,
+    // },
+    // {
+    //     name: "多人上線",
+    //     cases: test_suite_4_1_800_online,
+    //     point: 1,
+    // },
+    {
+        name: "多人上線下線",
+        cases: test_suite_4_2_800_online_offline,
+        point: 1,
+    },
 ];
 
 async function judge(test_suites) {
@@ -70,17 +91,23 @@ async function judge(test_suites) {
     let count = 1;
     for (let test_suite of test_suites) {
         let ok = true;
-        for (let test_case of test_suite) {
+        for (let test_case of test_suite.cases) {
             child_process.execSync("rm -rf working_dir");
             child_process.execSync("mkdir working_dir");
             child_process.execSync("cp inf-bonbon-server working_dir");
             process.chdir("./working_dir");
             const port = await run_until_port_ok();
-            ok = ok && await test_case(port);
+            
+            console.log(`測試：${test_case.name}`)
+            const case_ok = await test_case.func(port);
+            console.log(`測試：${test_case.name} ${ok ? "通過".green : "失敗".red}`);
+
+            ok = ok && case_ok;
+
             child_process.execSync("killall inf-bonbon-server");
         }
-        point += (ok ? 2 : 0);
-        console.log(`測試集 ${count}： ${ok ? "通過".green : "失敗".red}`);
+        point += (ok ? test_suite.point : 0);
+        console.log(`-------------- 測試集 ${test_suite.name}： ${ok ? "通過".green : "失敗".red} ----------------`);
         count += 1;
     }
     console.log(`得分爲 ${point} 分`);
