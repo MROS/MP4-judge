@@ -30,7 +30,7 @@ module.exports = [
     {
         name: "速度是否達到兩倍",
         func: async function (port) {
-            const FALSE_NUMBER = 10;
+            const FALSE_NUMBER = 20;
             const unit_ns = measure_time();
             const estimate_ns = unit_ns * (FALSE_NUMBER * (FALSE_NUMBER + 1) / 2 + 1);
 
