@@ -97,13 +97,27 @@ const test_suites = [
     },
 ];
 
+async function run_until_work(f) {
+	while (true) {
+		try {
+			f();
+		} catch(error) {
+			console.log(error.message);
+			console.log("再試一次");
+			await util.sleep(1000)
+			continue;
+		}
+		break;
+	}
+}
+
 async function judge(test_suites) {
     let point = 0;
     let count = 1;
     for (let test_suite of test_suites) {
         let ok = true;
         for (let test_case of test_suite.cases) {
-            child_process.execSync("rm -rf working_dir");
+			await run_until_work(() => { child_process.execSync("rm -rf working_dir"); })
             child_process.execSync("mkdir working_dir");
             child_process.execSync("cp inf-bonbon-server working_dir");
             process.chdir("./working_dir");
