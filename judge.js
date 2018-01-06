@@ -60,6 +60,7 @@ async function run_until_port_ok() {
 const test_suite_1_1_basic = require("./1_1_basic.js");
 const test_suite_1_2_small = require("./1_2_small.js");
 const test_suite_2_parallel = require("./2_parallel.js");
+const test_suite_3_crash = require("./3_crash.js");
 const test_suite_4_1_800_online = require("./4_1_800_online.js");
 const test_suite_4_2_800_online_offline = require("./4_2_800_online_offline.js");
 
@@ -77,6 +78,11 @@ const test_suites = [
     {
         name: "平行化程度",
         cases: test_suite_2_parallel,
+        point: 2,
+    },
+    {
+        name: "惡意程式",
+        cases: test_suite_3_crash,
         point: 2,
     },
     {

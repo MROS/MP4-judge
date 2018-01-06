@@ -13,7 +13,7 @@ int filter_function(struct User user) {
     }
     return (x == 0);
 }
-`
+`;
     },
     busy_then_true: function(amount) {
         return `
@@ -24,6 +24,20 @@ int filter_function(struct User user) {
     }
     return !(x == 0);
 }
-`
+`;
+    },
+    crash_between: function(left, right) {
+        return `
+int filter_function(struct User user) {
+    int sum = 0;
+
+    for (int i = ${left}; i <= ${right}; i++) {
+        int a = 1000000 / (user.age - i);
+        sum += a;
+    }
+    return sum;
+}
+`;
+        
     }
 }
