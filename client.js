@@ -19,20 +19,32 @@ const EVENT = {
     OTHER_SIDE_QUIT: 6
 };
 
+const sockets = [];
+
+function destroy_sockets() {
+    while (sockets.length != 0) {
+        const s = sockets.pop();
+        if (!s.destroyed) {
+            s.destroy();
+        }
+    }
+}
 
 class Client {
     constructor(port, hook) {
         this.msg_count = 0;
         this.socket = net.createConnection({ host: "localhost", port: port });
 
+        sockets.push(this.socket);
+
         this.socket.on('connect', () => { this.status = STATUS.IDLE; });
         this.buffer = "";
         this.socket.on('data', (data) => {
             this.buffer += data.toString();
         })
-        // this.socket.on('error', (error) => {
-        //     console.error(error);
-        // })
+        this.socket.on('error', (error) => {
+            console.error(error);
+        })
 
     }
     get_cmd() {
@@ -107,5 +119,6 @@ class Client {
 
 module.exports = {
     Client,
-    EVENT
+    EVENT,
+    destroy_sockets,
 }

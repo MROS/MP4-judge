@@ -28,6 +28,7 @@ const C = 500 * 1000 * 1000;
 
 module.exports = [
     {
+        time_limit: 200,
         name: "速度是否達到 1.5 倍",
         func: async function (port) {
             const FALSE_NUMBER = 20;

@@ -6,6 +6,7 @@ const randomstring = require("randomstring");
 
 module.exports = [
     {
+        time_limit: (8 * 60),
         name: "七百人上線後、五人忙碌匹配、傳一百訊息",
         func: async function (port) {
             const clients = [];
@@ -28,7 +29,7 @@ module.exports = [
             const busy_clients = [];
             for (let i = 0; i < 5; i++) {
                 const client = new Client(port);
-                busy_clients.push(clients);
+                busy_clients.push(client);
                 client.try_match(0, filter_function.busy_then_false(1e10));
                 await client.get_try_match_ack();
             }

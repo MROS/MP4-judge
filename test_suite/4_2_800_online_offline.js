@@ -6,6 +6,7 @@ const randomstring = require("randomstring");
 
 module.exports = [
     {
+        time_limit: (12 * 60),
         name: "700 上線後、350 人下線、350 人上線、5 人忙碌匹配、傳 100 訊息",
         func: async function (port) {
             const clients = [];
