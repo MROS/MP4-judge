@@ -30,6 +30,9 @@ class Client {
         this.socket.on('data', (data) => {
             this.buffer += data.toString();
         })
+        // this.socket.on('error', (error) => {
+        //     console.error(error);
+        // })
 
     }
     get_cmd() {

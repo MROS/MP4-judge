@@ -13,12 +13,12 @@ module.exports = [
             for (let i = 0; i < NUMBER * 2; i++) {
                 const client = new Client(port);
                 clients.push(client);
-                client.try_match(i, filter_function.match_with_age(2 * NUMBER - 1 - i));
+                client.try_match(i, filter_function.always_true);
                 await client.get_try_match_ack();
             }
             let promises = [];
             for (let i = 0; i < NUMBER * 2; i++) {
-                const p = clients[i].get_matched((cmd) => cmd.age == (2 * NUMBER - 1 - i));
+                const p = clients[i].get_matched((cmd) => cmd.age == ((i % 2 == 0) ? i + 1 : i - 1));
                 promises.push(p);
             }
             let ok = util.all_true(await Promise.all(promises));
@@ -28,22 +28,22 @@ module.exports = [
             // 一半的人斷線
             console.log("一半的人斷線");
             for (let i = 0; i < NUMBER; i++) {
-                clients[i].close();
+                clients[2 * i].close();
             }
-            for (let i = NUMBER; i < NUMBER * 2; i++) {
-                await clients[i].get_other_side_quit();
+            for (let i = 0; i < NUMBER; i++) {
+                await clients[2 * i + 1].get_other_side_quit();
             }
             console.log("全數收到對方斷線");
             for (let i = 0; i < NUMBER; i++) {
-                clients[i] = new Client(port);
+                clients[2 * i] = new Client(port);
             }
             for (let i = 0; i < NUMBER * 2; i++) {
-                clients[i].try_match(i, filter_function.match_with_age(2 * NUMBER - 1 - i));
+                clients[i].try_match(i, filter_function.always_true);
                 await clients[i].get_try_match_ack();
             }
             promises = [];
             for (let i = 0; i < NUMBER * 2; i++) {
-                const p = clients[i].get_matched((cmd) => cmd.age == (2 * NUMBER - 1 - i));
+                const p = clients[i].get_matched((cmd) => cmd.age == ((i % 2 == 0) ? i + 1 : i - 1));
                 promises.push(p);
             }
             ok = util.all_true(await Promise.all(promises));
@@ -51,8 +51,10 @@ module.exports = [
             console.log(`前 ${NUMBER * 2} 位再次匹配完成`);
 
 
+            const busy_clients = []
             for (let i = 0; i < 5; i++) {
                 const client = new Client(port);
+                busy_clients.push(client);
                 client.try_match(0, filter_function.busy_then_false(1e10));
                 await client.get_try_match_ack();
             }
@@ -66,8 +68,8 @@ module.exports = [
 
                 for (let i = 0; i < 100; i++) {
                     const str = randomstring.generate(1000);
-                    clients[i].send_message(str);
-                    let p = clients[NUMBER * 2 - 1 - i].get_recv_message((cmd) => cmd.message == str);
+                    clients[2 * i].send_message(str);
+                    let p = clients[2 * i + 1].get_recv_message((cmd) => cmd.message == str);
                     promises.push(p);
                 }
 
@@ -77,7 +79,12 @@ module.exports = [
 
             });
 
-            return (await p);
+            const res = await p
+
+            busy_clients.forEach((c) => c.close());
+            clients.forEach((c) => c.close());
+
+            return res;
 
         },
     },

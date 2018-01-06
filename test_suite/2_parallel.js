@@ -28,7 +28,7 @@ const C = 500 * 1000 * 1000;
 
 module.exports = [
     {
-        name: "速度是否達到兩倍",
+        name: "速度是否達到 1.5 倍",
         func: async function (port) {
             const FALSE_NUMBER = 20;
             const unit_ns = measure_time();
@@ -62,7 +62,7 @@ module.exports = [
             console.log(`estimate: ${estimate_ns / 1e9}\nreal: ${real_ns / 1e9}`);
             console.log(`加速 ${rate} 倍`);
 
-            if (rate < 2) {
+            if (rate < 1.5) {
                 return false;
             } else {
                 return true;
