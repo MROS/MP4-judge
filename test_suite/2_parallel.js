@@ -1,14 +1,14 @@
-const Client = require("./client.js").Client;
-const EVENT = require("./client.js").EVENT;
-const filter_function = require("./filter_function.js");
-const util = require("./util.js");
+const Client = require("../client.js").Client;
+const EVENT = require("../client.js").EVENT;
+const filter_function = require("../filter_function.js");
+const util = require("../util.js");
 const child_process = require("child_process");
 
 function measure_time() {
 
 
-    child_process.execSync("cp ../filter_function.c .");
-    child_process.execSync("cp ../run.c .");
+    child_process.execSync("cp ../c_code/filter_function.c .");
+    child_process.execSync("cp ../c_code/run.c .");
     child_process.execSync("gcc -O2 -fPIC -shared filter_function.c -o libfilter.so");
     child_process.execSync("gcc run.c -o runner -ldl");
 

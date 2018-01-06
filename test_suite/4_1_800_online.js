@@ -1,7 +1,7 @@
-const Client = require("./client.js").Client;
-const EVENT = require("./client.js").EVENT;
-const filter_function = require("./filter_function.js");
-const util = require("./util.js");
+const Client = require("../client.js").Client;
+const EVENT = require("../client.js").EVENT;
+const filter_function = require("../filter_function.js");
+const util = require("../util.js");
 const randomstring = require("randomstring");
 
 module.exports = [

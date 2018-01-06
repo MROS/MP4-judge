@@ -57,12 +57,12 @@ async function run_until_port_ok() {
     }
 }
 
-const test_suite_1_1_basic = require("./1_1_basic.js");
-const test_suite_1_2_small = require("./1_2_small.js");
-const test_suite_2_parallel = require("./2_parallel.js");
-const test_suite_3_crash = require("./3_crash.js");
-const test_suite_4_1_800_online = require("./4_1_800_online.js");
-const test_suite_4_2_800_online_offline = require("./4_2_800_online_offline.js");
+const test_suite_1_1_basic = require("./test_suite/1_1_basic.js");
+const test_suite_1_2_small = require("./test_suite/1_2_small.js");
+const test_suite_2_parallel = require("./test_suite/2_parallel.js");
+const test_suite_3_crash = require("./test_suite/3_crash.js");
+const test_suite_4_1_800_online = require("./test_suite/4_1_800_online.js");
+const test_suite_4_2_800_online_offline = require("./test_suite/4_2_800_online_offline.js");
 
 const test_suites = [
     {
