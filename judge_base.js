@@ -2,6 +2,7 @@
 // 執行 node judge.js
 
 
+const path = require("path");
 const child_process = require("child_process");
 const { Client, destroy_sockets} = require("./client.js");
 const util = require("./util.js");
@@ -118,7 +119,7 @@ async function run_with_time_limit(limit, promise) {
     return p;
 };
 
-async function judge(test_suites) {
+async function judge(test_suites, mp4_path) {
     let point = 0;
     let count = 1;
     for (let test_suite of test_suites) {
@@ -127,11 +128,14 @@ async function judge(test_suites) {
 			await run_until_work(() => { child_process.execSync("rm -rf working_dir"); })
             child_process.execSync("mkdir working_dir");
             child_process.execSync("cp inf-bonbon-server working_dir");
+			if (mp4_path) {
+				child_process.execSync(`cp -r ${mp4_path}/* working_dir`);
+			}
             process.chdir("./working_dir");
             const port = await run_until_port_ok();
 
             console.log(`測試：${test_case.name}`);
-            const time_limit = test_case.time_limit || 15; // 沒有限制時間，就是 15 秒
+            const time_limit = test_case.time_limit || 30; // 沒有限制時間，就是 30 秒
             let case_ok;
             try {
                 case_ok = await run_with_time_limit(time_limit, test_case.func(port));
@@ -157,7 +161,9 @@ async function judge(test_suites) {
             }
 
             destroy_sockets();
-            child_process.execSync("killall -q inf-bonbon-server");
+			try {
+				child_process.execSync("killall -q inf-bonbon-server");
+			} catch (error) {}
             process.chdir("..");
         }
         point += (ok ? test_suite.point : 0);
@@ -165,6 +171,7 @@ async function judge(test_suites) {
         count += 1;
     }
     console.log(`得分爲 ${point} 分`);
+	return point;
 }
 
 module.exports= {

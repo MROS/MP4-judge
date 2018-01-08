@@ -61,7 +61,14 @@ class Client {
                     arr = this.buffer.split("\n");
                     len = arr.length;
                     if (len > 1) {
-                        resolve(JSON.parse(arr[0]));
+						let json;
+						try {
+							json = JSON.parse(arr[0]);
+						} catch (error) {
+							console.log(`${arr[0]} 不是 JSON`)
+							resolve(null);
+						}
+                        resolve(json);
                         this.buffer = arr.slice(1).join("\n");
                         this.socket.removeListener('data', callback);
                     }

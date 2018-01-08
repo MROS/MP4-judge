@@ -6,7 +6,7 @@ const child_process = require("child_process");
 
 module.exports = [
     {
-        time_limit: 60,
+        time_limit: 90,
         name: "十個總是 crash，兩個匹配",
         func: async function (port) {
             const clients = [];
@@ -35,7 +35,7 @@ module.exports = [
         },
     },
     {
-        time_limit: 60,
+        time_limit: 90,
         name: "偶爾 crash，偶爾匹配",
         func: async function (port) {
             const clients = [];
