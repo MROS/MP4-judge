@@ -16,14 +16,14 @@ npm install
 1. 先複製執行檔到當前目錄，執行 judge.js
 
 ``` sh
-cp ${你的 server 所在目錄}/inf-bonbon-server .
+cp ${server 所在目錄}/inf-bonbon-server .
 node judge.js
 ```
 
 2. 先於你的 MP4 下編譯好 inf-bonbon-server，再於命令行參數指定它所在的目錄
 
 ``` sh
-# 編譯 inf-bonbon-server
+# 先在 MP4 目錄下編譯 inf-bonbon-server
 node judge.js --dir ${MP4 目錄}
 ```
 
@@ -34,7 +34,32 @@ node judge.js --dir ${MP4 目錄}
 ## 目錄結構解釋
 
 本測試程式的目錄結構如下
+```
+.
+├── judge.js                    # 測試單支伺服器的腳本
+├── judge_all.js                # 測試所有同學伺服器的腳本，需要額外資料
+├── judge_base.js               # judge 程式的核心，judge.js 與 judge_all.js 皆依賴此檔案
+├── client.js                   # 客戶端的類別
+├── cmd.js                      # 生成 API 的輔助函式
+├── util.js                     # 功能性函式
+├── filter_function.js          # 生成篩選函式的輔助函式
+├── package.json                # node.js 建置訊息
+├── README.md                   # 讀我
+├── c_code                      # 測速時用到的 C 程式碼
+│   ├── filter_function.c
+│   └── run.c
+└── test_suite                  # 測試集，存放各個測資的定義
+    ├── 1_1_basic.js
+    ├── 1_2_small.js
+    ├── 2_parallel.js
+    ├── 3_always_crash.js
+    ├── 3_sometimes_crash.js
+    ├── 4_1_800_online.js
+    └── 4_2_800_online_offline.js
+```
 
 ## 自定義
 
-可以修改 judge.js 中的 `test_suites` 變數來選擇想測試的測資 
+可以修改 judge_base.js 中的 `test_suites` 變數來選擇想測試的測資 
+
+此外，每一個測資都可以設定 time\_limit ，若無設定則一律是 30 秒，若想要設定請自行修改 test_suite 底下的各檔案。
